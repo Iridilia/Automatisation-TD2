@@ -8,6 +8,7 @@ Il permet de lister plusieurs entreprises, et d'en voir leur bureaux et employé
 - MariaDB 10
 - Slim 4
 - Eloquent 10
+- Vite
 
 ## Préréquis pour une installation local
 - Docker
