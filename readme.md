@@ -1,4 +1,5 @@
 # Annuaire d'entreprise
+_Exercice rendu par Sarah Chrusciel_
 
 Ce projet est un petit annuaire d'entreprises.  
 Il permet de lister plusieurs entreprises, et d'en voir leur bureaux et employées.
