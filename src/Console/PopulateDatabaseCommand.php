@@ -5,19 +5,23 @@ namespace App\Console;
 use App\Models\Company;
 use App\Models\Employee;
 use App\Models\Office;
+use Illuminate\Database\Capsule\Manager;
 use Illuminate\Support\Facades\Schema;
 use Slim\App;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Faker\Factory as FakerFactory;
 
 class PopulateDatabaseCommand extends Command
 {
     private App $app;
+    private $faker;
 
     public function __construct(App $app)
     {
         $this->app = $app;
+        $this->faker = FakerFactory::create();
         parent::__construct();
     }
 
@@ -31,43 +35,69 @@ class PopulateDatabaseCommand extends Command
     {
         $output->writeln('Populate database...');
 
-        /** @var \Illuminate\Database\Capsule\Manager $db */
-        $db = $this->app->getContainer()->get('db');
-
-        $db->getConnection()->statement("SET FOREIGN_KEY_CHECKS=0");
-        $db->getConnection()->statement("TRUNCATE `employees`");
-        $db->getConnection()->statement("TRUNCATE `offices`");
-        $db->getConnection()->statement("TRUNCATE `companies`");
-        $db->getConnection()->statement("SET FOREIGN_KEY_CHECKS=1");
-
-
-        $db->getConnection()->statement("INSERT INTO `companies` VALUES
-    (1,'Stack Exchange','0601010101','stack@exchange.com','https://stackexchange.com/','https://i.stack.imgur.com/UPdHB.jpg', now(), now(), null),
-    (2,'Google','0602020202','contact@google.com','https://www.google.com','https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Google_office_%284135991953%29.jpg/800px-Google_office_%284135991953%29.jpg?20190722090506',now(), now(), null)
-        ");
-
-        $db->getConnection()->statement("INSERT INTO `offices` VALUES
-    (1,'Bureau de Nancy','1 rue Stanistlas','Nancy','54000','France','nancy@stackexchange.com',NULL,1, now(), now()),
-    (2,'Burea de Vandoeuvre','46 avenue Jeanne d\'Arc','Vandoeuvre','54500','France',NULL,NULL,1, now(), now()),
-    (3,'Siege sociale','2 rue de la primatiale','Paris','75000','France',NULL,NULL,2, now(), now()),
-    (4,'Bureau Berlinois','192 avenue central','Berlin','12277','Allemagne',NULL,NULL,2, now(), now())
-        ");
-
-        $db->getConnection()->statement("INSERT INTO `employees` VALUES
-     (1,'Camille','La Chenille',1,'camille.la@chenille.com',NULL,'Ingénieur', now(), now()),
-     (2,'Albert','Mudhat',2,'albert.mudhat@aqume.net',NULL,'Superviseur', now(), now()),
-     (3,'Sylvie','Tesse',3,'sylive.tesse@factice.local',NULL,'PDG', now(), now()),
-     (4,'John','Doe',4,'john.doe@generique.org',NULL,'Testeur', now(), now()),
-     (5,'Jean','Bon',1,'jean@test.com',NULL,'Developpeur', now(), now()),
-     (6,'Anais','Dufour',2,'anais@aqume.net',NULL,'DBA', now(), now()),
-     (7,'Sylvain','Poirson',3,'sylvain@factice.local',NULL,'Administrateur réseau', now(), now()),
-     (8,'Telma','Thiriet',4,'telma@generique.org',NULL,'Juriste', now(), now())
-        ");
-
-        $db->getConnection()->statement("update companies set head_office_id = 1 where id = 1;");
-        $db->getConnection()->statement("update companies set head_office_id = 3 where id = 2;");
+        $this->populateCompanies();
+        $this->populateOffices();
+        $this->populateEmployees();
 
         $output->writeln('Database created successfully!');
         return 0;
+    }
+
+    private function populateCompanies()
+    {
+        $db = $this->app->getContainer()->get('db');
+
+        // Utilisation de Faker pour générer des données aléatoires pour les entreprises
+        $db->table('companies')->insert([
+            [
+                'name' => $this->faker->company,
+                'phone' => $this->faker->phoneNumber,
+                'email' => $this->faker->companyEmail,
+                'website' =>  'http://'.$this->faker->company.'.com',
+                'image' => $this->faker->url,
+                'created_at' =>  $this->faker->date,
+                'updated_at' =>  $this->faker->date
+            ],
+        ]);
+    }
+
+    private function populateOffices()
+    {
+        $db = $this->app->getContainer()->get('db');
+
+        // Utilisation de Faker pour générer des données aléatoires pour les bureaux
+        $db->table('offices')->insert([
+            [
+                'name' => $this->faker->company . ' Office',
+                'address' => $this->faker->address,
+                'city' => $this->faker->city,
+                'zip_code' => $this->faker->postcode,
+                'country' => $this->faker->country,
+                'email' => $this->faker->companyEmail,
+                'phone'=> $this->faker->phoneNumber,
+                'company_id'=>$this->faker->numberBetween(0,5),
+                'created_at' =>  $this->faker->date,
+                'updated_at' =>  $this->faker->date
+            ]
+        ]);
+    }
+
+    private function populateEmployees()
+    {
+        $db = $this->app->getContainer()->get('db');
+
+        // Utilisation de Faker pour générer des données aléatoires pour les employés
+        $db->table('employees')->insert([
+            [
+                'first_name' => $this->faker->firstName,
+                'last_name' => $this->faker->lastName,
+                'office_id' => $this->faker->numberBetween(1, 4),
+                'email' => $this->faker->email,
+                'phone'=> $this->faker->phoneNumber,
+                'job_title' => $this->faker->jobTitle,
+                'created_at' =>  $this->faker->date,
+                'updated_at' =>  $this->faker->date
+            ]
+        ]);
     }
 }
