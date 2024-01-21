@@ -30,10 +30,10 @@ Il permet de lister plusieurs entreprises, et d'en voir leur bureaux et employé
 Il faut que le container database soit lancé pour effectuer ces commandes.
  
 **Supprimer et re-créer la base de données**  
-`dexec php bin/console db:create`   
+`docker compose php php bin/console db:create`   
 
 **Alimenter la base de données**  
-`dexec php bin/console db:populate`   
+`docker compose exec php php bin/console db:populate`   
 
 ## Structure du projet
 - **bin** : Contient le script permettant de lancer des commandes. 
