@@ -23,7 +23,10 @@ Il permet de lister plusieurs entreprises, et d'en voir leur bureaux et employé
 3) Installer les dépendances  
 `docker compose run --rm php composer install`
 
-4) Lancer le container  
+4) Installation de node
+`docker compose run --rm node npm install`
+
+5) Lancer le container  
 `docker compose up`
 
 ## (re)Créer et alimenter la base de données
@@ -33,17 +36,18 @@ Il faut que le container database soit lancé pour effectuer ces commandes.
 `docker compose php php bin/console db:create`   
 
 **Alimenter la base de données**  
-`docker compose exec php php bin/console db:populate`   
+`docker compose exec php php bin/console db:populate`
 
 ## Structure du projet
 - **bin** : Contient le script permettant de lancer des commandes. 
 - **config** : Contient les fichiers de configuration de l'application.
 - **public** : Contient les fichiers accessibles publiquement
-    - **assets** : Contient les fichiers css, js, images, etc.
+- **assets** : Contient les fichiers css, js, images, etc.
 - **src** : Contient le code source de l'application
     - **Console** : Contient les commandes de l'application
     - **Controller** : Contient les contrôleurs de l'application
     - **Models** : Contient les modèles de l'application
     - **Twig** : Contient les extension Twig de l'application
 - **view** : Contient les fichiers .twig de l'application
+
 
